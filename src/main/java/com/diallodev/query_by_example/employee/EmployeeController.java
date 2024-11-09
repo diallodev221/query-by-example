@@ -28,4 +28,20 @@ public class EmployeeController {
         Collection<Employee> employees = service.findEmployeesWithCustomMatcher(firstName, department);
         return ResponseEntity.ok(employees);
     }
+
+    @PostMapping("/search/example/one")
+    ResponseEntity<Employee> findOneByExample(@RequestBody @Valid Employee employee) {
+        Employee employeeNotFound = service.findOneByExample(employee).orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
+        return ResponseEntity.ok(employeeNotFound);
+    }
+
+    @PostMapping("/count")
+    long countEmployeesByExample(@RequestBody @Valid Employee employee) {
+        return service.countEmployeesByExample(employee);
+    }
+
+    @PostMapping("/exists")
+    boolean existsByExample(@RequestBody @Valid Employee employee) {
+        return service.existsByExample(employee);
+    }
 }

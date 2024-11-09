@@ -4,15 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.data.domain.ExampleMatcher.matching;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EmployeeService {
 
     private final EmployeeRepository repository;
@@ -43,8 +44,8 @@ public class EmployeeService {
                 .withIgnoreCase()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
                 .withIgnoreNullValues()
-                .withMatcher("firstName", matcher -> matcher.exact())
-                .withMatcher("department", matcher -> matcher.contains());
+                .withMatcher("firstName", ExampleMatcher.GenericPropertyMatcher::exact)
+                .withMatcher("department", ExampleMatcher.GenericPropertyMatcher::contains);
 
         Example<Employee> example = Example.of(employee, exampleMatcher);
         return repository.findAll(example);
